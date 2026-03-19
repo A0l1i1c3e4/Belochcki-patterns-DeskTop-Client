@@ -8,12 +8,13 @@ import { Error500Page } from "../pages/error500/error500.tsx";
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/main" element={<MainPage />} />
-      <Route path="/" element={<Navigate to="/main" replace />} />
+      <Route path="/login" element={<MainPage />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
  
       <Route element={<MainLayout />}>
         <Route path="*" element={<h1>Страница не найдена</h1>} />
         <Route path="/error-500" element={<Error500Page />} />
+        <Route path="/main" element={<MainPage />} />
       </Route>
     </Routes>
   );

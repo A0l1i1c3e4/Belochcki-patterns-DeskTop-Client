@@ -19,11 +19,8 @@ export default function Header() {
           </Typography>
 
           <Box sx={{ display: "flex", gap: 1, mt: 0.5 }}>
-            <Button color="inherit" component={Link} to="/course">
+            <Button color="inherit" component={Link} to="/main">
               Главная
-            </Button>
-            <Button color="inherit" component={Link} to="/students">
-              Студенты
             </Button>
           </Box>
         </Box>

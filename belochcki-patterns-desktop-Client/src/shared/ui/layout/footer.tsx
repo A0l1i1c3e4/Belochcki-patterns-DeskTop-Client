@@ -11,7 +11,7 @@ export default function Footer() {
       }}
     >
       <Typography variant="body2">
-        © {new Date().getFullYear()} Pottery Courses
+        © {new Date().getFullYear()} Scum Bank
       </Typography>
     </Box>
   );
