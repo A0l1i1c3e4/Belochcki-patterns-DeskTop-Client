@@ -1,0 +1,19 @@
+import axios from "axios";
+
+export type OperationType = "withdraw" | "deposit";
+
+export interface DebitExchange {
+  amount: number;
+  comment: string;
+}
+
+export const fetchExchangeDebitAccounts = async (data: DebitExchange, accountId: string, operationType: OperationType) => {
+  const token = localStorage.getItem("accessToken");
+  const id = localStorage.getItem("clientID");
+  const response = await axios.post("http://localhost:8085/api/gateway/accounts/clients/" + id + "/debit-accounts/" + accountId + "/" + operationType, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};

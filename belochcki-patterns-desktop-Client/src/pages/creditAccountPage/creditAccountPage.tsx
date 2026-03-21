@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate} from "react-router-dom";
-import { Box, Grid, Pagination, Typography, Button} from "@mui/material";
+import { useNavigate, Link} from "react-router-dom";
+import { Box, Grid, Pagination, Typography} from "@mui/material";
 import type {Account, AccountsResponse} from "../../shared/api/account/accounts";
 import { fetchDebitAccounts, fetchCreditAccounts } from "../../shared/api/account/accounts";
 import { AccountCard, CreditAccountCard } from "../../entities/account/accountCard";
 import { CreateDebitForm } from "../../features/createDebitAccount/createDebitAccount";
 
-export const AccountsPage = () => {
+export const CreditAccountPage = () => {
   const [debitAccounts, setDebitAccounts] = useState<Account[]>([]);
   const [creditAccounts, setCraditAccounts] = useState<Account[]>([]);
   const [page, setPage] = useState(1);
@@ -17,7 +17,7 @@ export const AccountsPage = () => {
   
   const loadDebitAccounts = async () => {
     try {
-      localStorage.setItem("accessToken", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjOGQ0MGVlYi02ZWY2LTQ2MDQtOTk0OC0yZmVjMWMyMTgwYjkiLCJzY29wZSI6IkVNUExPWUVFIENMSUVOVCIsImxvZ2luIjoic3RyaW5nIiwiaWF0IjoxNzc0MTI4Nzg2LCJleHAiOjE3NzQxMzIzODZ9.wpMBAw_GLGdiZ8sL7v5joA2IeloxJATjNowkAG1yILs");
+      localStorage.setItem("accessToken", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjOGQ0MGVlYi02ZWY2LTQ2MDQtOTk0OC0yZmVjMWMyMTgwYjkiLCJzY29wZSI6IkVNUExPWUVFIENMSUVOVCIsImxvZ2luIjoic3RyaW5nIiwiaWF0IjoxNzc0MTE1MjI1LCJleHAiOjE3NzQxMTg4MjV9.1o-T8BnypkF0IOd7v8Glihbbgg8NHX5qmYWCkJtv-ak");
       localStorage.setItem("clientID", "c8d40eeb-6ef6-4604-9948-2fec1c2180b9");
       const data: AccountsResponse = await fetchDebitAccounts(page, pageSize);
 
@@ -53,13 +53,9 @@ export const AccountsPage = () => {
 
   return (
     <Box sx={{ display: "flex", gap: 2, alignItems: "center" , flexDirection: "column", width: "70%"}}>
-      <Button
-        variant="contained"
-        sx={{ width: "50%"}}
-        fullWidth
-        onClick={() => setOpenForm(true)}
-      > Открыть новый дебетовый счёт
-      </Button>
+        <Link to={`/accounts`} >
+            ← Вернутся к всем счетам
+        </Link>
       <Box sx={{ p: 4, display: "flex",  flexDirection: "row" }}>
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, md: 9 }}>

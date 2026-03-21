@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, Button, MenuItem, Select, Dialog, DialogTitle, DialogContent, DialogActions, Alert } from "@mui/material";
-import { fetchCreateDebitAccounts } from "../../shared/api/createDebitAccount";
+import { fetchCreateDebitAccounts } from "../../shared/api/account/createDebitAccount";
 
 type Props = {
   open: boolean;
