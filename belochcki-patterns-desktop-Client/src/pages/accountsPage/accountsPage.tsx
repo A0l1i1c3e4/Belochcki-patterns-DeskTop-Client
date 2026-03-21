@@ -1,22 +1,27 @@
 import { useEffect, useState } from "react";
 import { useNavigate} from "react-router-dom";
-import { Box, Grid, Pagination, Typography} from "@mui/material";
+import { Box, Grid, Pagination, Typography, Button} from "@mui/material";
 import type {Account, AccountsResponse} from "../../shared/api/accounts";
-import { fetchDebitAccounts } from "../../shared/api/accounts";
+import { fetchDebitAccounts, fetchCreditAccounts } from "../../shared/api/accounts";
+import { AccountCard } from "../../entities/account/accountCard";
+import { CreateDebitForm } from "../../features/createDebitAccount/createDebitAccount";
 
 export const AccountsPage = () => {
-  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [debitAccounts, setDebitAccounts] = useState<Account[]>([]);
+  const [creditAccounts, setCraditAccounts] = useState<Account[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-
+  const [openForm, setOpenForm] = useState(false);
   const pageSize = 6;
   const navigate = useNavigate();
   
-  const loadAccounts = async () => {
+  const loadDebitAccounts = async () => {
     try {
+      localStorage.setItem("accessToken", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjOGQ0MGVlYi02ZWY2LTQ2MDQtOTk0OC0yZmVjMWMyMTgwYjkiLCJzY29wZSI6IkVNUExPWUVFIENMSUVOVCIsImxvZ2luIjoic3RyaW5nIiwiaWF0IjoxNzc0MTExNDA1LCJleHAiOjE3NzQxMTUwMDV9.ptCx8nZcroQeZe4TG1RbyC312ortfIjJSilP0pAdsaY");
+      localStorage.setItem("clientID", "c8d40eeb-6ef6-4604-9948-2fec1c2180b9");
       const data: AccountsResponse = await fetchDebitAccounts(page, pageSize);
 
-      setAccounts(data?.content ?? []);
+      setDebitAccounts(data?.content ?? []);
       setTotal(data.totalPages);
     } catch (err: any) {
       const status = err.response?.status;
@@ -26,26 +31,47 @@ export const AccountsPage = () => {
     }
   };
 
+  const loadCreditAccount = async () => {
+    try {
+      const data: AccountsResponse = await fetchCreditAccounts();
+
+      setCraditAccounts(data?.content ?? []);
+    } catch (err: any) {
+      const status = err.response?.status;
+      if (status === 401) navigate("/login");
+      else if (status === 500) navigate("/error-500");
+      else console.error("Неизвестная ошибка при загрузке постов", err);
+    }
+  };
+
   useEffect(() => {
-    loadAccounts();
+    loadDebitAccounts();
+    loadCreditAccount();
   }, [page]);
   
   const totalPages = Math.ceil(total / pageSize);
 
   return (
     <Box sx={{ display: "flex", gap: 2, alignItems: "center" , flexDirection: "column", width: "70%"}}>
-      <Box sx={{ p: 4 }}>
+      <Button
+        variant="contained"
+        sx={{ width: "50%"}}
+        fullWidth
+        onClick={() => setOpenForm(true)}
+      > Открыть новый дебетовый счёт
+      </Button>
+      <Box sx={{ p: 4, display: "flex",  flexDirection: "row" }}>
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, md: 9 }}>
             <Box sx={{ display: "flex", flexDirection: "column", minHeight: 600 }}>
               <Box sx={{ flex: 1 }}>
-                {accounts.length === 0 ? (
+                {debitAccounts.length === 0 ? (
                   <Typography variant="body1" sx={{ textAlign: "center", mt: 4 }}>
                     Дебетовые счета не найдены
                   </Typography>
                 ) : (
                   <Grid container spacing={2}>
-                    {accounts.map(account => (
+                    {debitAccounts.map(account => (
                       <Grid size={{ xs: 12 }} key={account.id}>
                         <AccountCard account={account} />
                       </Grid>
@@ -63,9 +89,30 @@ export const AccountsPage = () => {
                   />
                 </Box>
               )}
+
             </Box>
           </Grid>
         </Grid>
+        <Box sx={{ flex: 1 }}>
+          {creditAccounts.length === 0 ? (
+            <Typography variant="body1" sx={{ textAlign: "center", mt: 4 }}>
+              У вас нет кредитного счёта.
+            </Typography>
+          ) : (
+            <Grid container spacing={2}>
+              {creditAccounts.map(account => (
+                <Grid size={{ xs: 12 }} key={account.id}>
+                  <AccountCard account={account} />
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </Box>
+        <CreateDebitForm
+          open={openForm}
+          onClose={() => setOpenForm(false)}
+          onDebitCreated={loadDebitAccounts}
+        />
       </Box>
     </Box>
   );
