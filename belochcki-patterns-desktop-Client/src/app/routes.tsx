@@ -3,6 +3,11 @@ import  MainLayout  from "../shared/ui/layout/mainLayout.tsx";
 
 
 import { MainPage } from "../pages/mainPage/mainPage.tsx";
+import { ProfilePage } from "../pages/profilePage/ProfilePage.tsx";
+import { AccountsPage } from "../pages/accountsPage/accountsPage.tsx";
+import { CreditsPage } from "../pages/creditsPage/creditsPage.tsx";
+import { CreditTariffsPage } from "../pages/creditTariffsPage/creditTariffsPage.tsx";
+import { AbountUsPage } from "../pages/abountUsPage/abountUsPage.tsx";
 import { Error500Page } from "../pages/error500/error500.tsx";
 
 export const AppRoutes = () => {
@@ -15,6 +20,11 @@ export const AppRoutes = () => {
         <Route path="*" element={<h1>Страница не найдена</h1>} />
         <Route path="/error-500" element={<Error500Page />} />
         <Route path="/main" element={<MainPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/accounts" element={<AccountsPage />} />
+        <Route path="/credits" element={<CreditsPage />} />
+        <Route path="/tariffs" element={<CreditTariffsPage />} />
+        <Route path="/abountUs" element={<AbountUsPage />} />
       </Route>
     </Routes>
   );
