@@ -32,11 +32,11 @@ export default function LoginPage() {
       const data: LoginResponse = await response.json();
       const token = data.token;
       alert(token);
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("accessToken", data.token);
       if (role === "CLIENT") {
-      window.location.href = `http://localhost:3001?token=${token}`;
+      window.location.href = `http://localhost:5173/main?accessToken=${token}`;
       } else {
-      window.location.href = `http://localhost:3002?token=${token}`;
+      window.location.href = `http://localhost:5174/main?accessToken=${token}`;
       }
     } catch (error: any) {
       showToast(error.message);
