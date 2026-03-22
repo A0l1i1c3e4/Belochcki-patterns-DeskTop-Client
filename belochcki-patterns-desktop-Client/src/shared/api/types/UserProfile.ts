@@ -17,3 +17,19 @@ export interface ErrorResponse {
     [key: string]: any;
   }>;
 }
+
+export interface EmployeeProfile {
+  id: string;
+  name: string;
+  login: string;
+  password: string;
+  status: 'UNLOCKED' | 'LOCKED' | string;
+  creditRating: Int16Array;
+  token: string;
+}
+
+export interface UpdateEmployeeProfileDto {
+  name: string;
+  login: string;
+  password: string;
+}

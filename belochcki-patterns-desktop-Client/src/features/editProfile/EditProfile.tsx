@@ -1,36 +1,55 @@
 import React, { useState } from 'react';
-import type { UserProfile } from '../../shared/api/types/UserProfile';
+import type {EmployeeProfile,UpdateEmployeeProfileDto} from '../../shared/api/types/UserProfile';
 import './EditProfile.css';
 
 interface EditProfileProps {
-  profile: UserProfile;
+  profile: EmployeeProfile;
   onClose: () => void;
-  onSave: (updatedProfile: Partial<UserProfile>) => Promise<void>; 
+  onSave: (updatedProfile: UpdateEmployeeProfileDto) => Promise<void>;
 }
 
-export const EditProfile: React.FC<EditProfileProps> = ({ 
-  profile, 
-  onClose, 
-  onSave 
+export const EditProfile: React.FC<EditProfileProps> = ({
+  profile,
+  onClose,
+  onSave,
 }) => {
-  const [fullName, setFullName] = useState(profile.fullName);
-  const [about, setAbout] = useState(profile.about);
+  const [name, setName] = useState(profile.name);
+  const [login, setLogin] = useState(profile.login);
+  const [password, setPassword] = useState(profile.password || '');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const validateForm = (): boolean => {
-    if (!fullName.trim()) {
-      setError('Имя и фамилия не могут быть пустыми');
+    if (!name.trim()) {
+      setError('Имя не может быть пустым');
       return false;
     }
-    if (fullName.length < 2) {
+
+    if (name.trim().length < 2) {
       setError('Имя должно содержать минимум 2 символа');
       return false;
     }
-    if (about.length > 500) {
-      setError('Описание не может быть длиннее 500 символов');
+
+    if (!login.trim()) {
+      setError('Логин не может быть пустым');
       return false;
     }
+
+    if (login.trim().length < 3) {
+      setError('Логин должен содержать минимум 3 символа');
+      return false;
+    }
+
+    if (!password.trim()) {
+      setError('Пароль не может быть пустым');
+      return false;
+    }
+
+    if (password.length < 4) {
+      setError('Пароль должен содержать минимум 4 символа');
+      return false;
+    }
+
     return true;
   };
 
@@ -44,8 +63,14 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 
     try {
       setIsSaving(true);
-      await onSave({ fullName, about });
-      onClose(); 
+
+      await onSave({
+        name: name.trim(),
+        login: login.trim(),
+        password: password.trim(),
+      });
+
+      onClose();
     } catch (err: any) {
       setError(err.message || 'Ошибка при сохранении');
     } finally {
@@ -61,29 +86,30 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 
   return (
     <div className="edit-profile-modal" onClick={handleClose}>
-      <div className="edit-profile-content" onClick={e => e.stopPropagation()}>
+      <div className="edit-profile-content" onClick={(e) => e.stopPropagation()}>
         <div className="edit-profile-header">
           <h3>Редактировать профиль</h3>
-          <button 
-            className="close-button" 
+          <button
+            className="close-button"
             onClick={handleClose}
             disabled={isSaving}
+            type="button"
           >
             ×
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="edit-profile-form">
           <div className="form-group">
-            <label htmlFor="fullName">
-              Имя и фамилия <span className="required">*</span>
+            <label htmlFor="name">
+              Имя <span className="required">*</span>
             </label>
             <input
               type="text"
-              id="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Введите ваше имя"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Введите имя"
               disabled={isSaving}
               className={error?.includes('Имя') ? 'error' : ''}
               autoFocus
@@ -91,47 +117,55 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           </div>
 
           <div className="form-group">
-            <label htmlFor="about">
-              О себе <span className="optional">(необязательно)</span>
+            <label htmlFor="login">
+              Логин <span className="required">*</span>
             </label>
-            <textarea
-              id="about"
-              value={about}
-              onChange={(e) => setAbout(e.target.value)}
-              placeholder="Расскажите о себе, ваших интересах и навыках"
-              rows={4}
+            <input
+              type="text"
+              id="login"
+              value={login}
+              onChange={(e) => setLogin(e.target.value)}
+              placeholder="Введите логин"
               disabled={isSaving}
-              className={error?.includes('Описание') ? 'error' : ''}
-              maxLength={500}
+              className={error?.includes('Логин') ? 'error' : ''}
             />
-            <div className="textarea-counter">
-              {about.length}/500 символов
-            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password">
+              Пароль <span className="required">*</span>
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Введите новый пароль"
+              disabled={isSaving}
+              className={error?.includes('Пароль') ? 'error' : ''}
+            />
           </div>
 
           {error && (
             <div className="form-error">
               <svg viewBox="0 0 24 24" width="20" height="20">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
               </svg>
               {error}
             </div>
           )}
 
           <div className="form-actions">
-            <button 
-              type="button" 
-              className="cancel-button" 
+            <button
+              type="button"
+              className="cancel-button"
               onClick={handleClose}
               disabled={isSaving}
             >
               Отмена
             </button>
-            <button 
-              type="submit" 
-              className="save-button"
-              disabled={isSaving}
-            >
+
+            <button type="submit" className="save-button" disabled={isSaving}>
               {isSaving ? (
                 <>
                   <span className="spinner"></span>
@@ -143,7 +177,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             </button>
           </div>
         </form>
-        
+
         {isSaving && (
           <div className="saving-overlay">
             <div className="saving-indicator">

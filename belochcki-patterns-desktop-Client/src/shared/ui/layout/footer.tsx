@@ -3,12 +3,15 @@ import { Box, Typography } from "@mui/material";
 export default function Footer() {
   return (
     <Box
-      sx={{
-        marginTop: "auto",
-        padding: 2,
+      component="footer"
+      sx={(theme) => ({
+        mt: "auto",
+        p: 2,
         textAlign: "center",
-        backgroundColor: "#f5f5f5",
-      }}
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.text.primary,
+        borderTop: `1px solid ${theme.palette.divider}`,
+      })}
     >
       <Typography variant="body2">
         © {new Date().getFullYear()} Scum Bank

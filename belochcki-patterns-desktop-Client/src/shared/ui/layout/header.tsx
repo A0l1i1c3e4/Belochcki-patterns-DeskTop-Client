@@ -1,10 +1,14 @@
-import { AppBar, Toolbar, Typography, Button, Box, IconButton } from "@mui/material";
-import { Link} from "react-router-dom";
+import { AppBar,Toolbar,Typography,Button,Box,IconButton,Switch,FormControlLabel,} from "@mui/material";
+import { Link } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useAppTheme } from "../../../app/ThemeProvider";
 
 export default function Header() {
+  const { mode, toggleTheme, isThemeLoading } = useAppTheme();
+
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("userId");
     window.location.href = "http://localhost:666/main";
   };
 
@@ -23,7 +27,19 @@ export default function Header() {
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex", gap: 1, mt: 0.5 }}>
+        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={mode === "DARK"}
+                onChange={toggleTheme}
+                disabled={isThemeLoading}
+              />
+            }
+            label={mode === "DARK" ? "Тёмная" : "Светлая"}
+            sx={{ mr: 1 }}
+          />
+
           <IconButton color="inherit" component={Link} to="/profile">
             <AccountCircleIcon sx={{ fontSize: 40 }} />
           </IconButton>

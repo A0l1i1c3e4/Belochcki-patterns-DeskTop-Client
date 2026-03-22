@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import  { ProfileCard } from '../../entities/profile/ProfileCard';
+import { ProfileCard } from '../../entities/profile/ProfileCard';
 import { EditProfile } from '../../features/editProfile/EditProfile';
 import { profileApi } from '../../shared/api/profileApi';
 
-import type { UserProfile } from '../../shared/api/types/UserProfile';
+import type {EmployeeProfile,UpdateEmployeeProfileDto,} from '../../shared/api/types/UserProfile';
 import './ProfilePage.css';
 
 export const ProfilePage: React.FC = () => {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<EmployeeProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -21,6 +21,7 @@ export const ProfilePage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
+
       const response = await profileApi.getProfile();
       setProfile(response.data);
     } catch (err: any) {
@@ -41,22 +42,19 @@ export const ProfilePage: React.FC = () => {
     setSaveError(null);
   };
 
-  const handleSaveProfile = async (updatedData: Partial<UserProfile>) => {
+  const handleSaveProfile = async (updatedData: UpdateEmployeeProfileDto) => {
     try {
       setSaveError(null);
-      
+
       const response = await profileApi.updateProfile(updatedData);
-      
       setProfile(response.data);
-      
+
       showNotification('Профиль успешно обновлен!', 'success');
-      
     } catch (err: any) {
       const errorMessage = err.message || 'Ошибка при сохранении профиля';
       setSaveError(errorMessage);
-      
+
       showNotification(errorMessage, 'error');
-      
       throw err;
     }
   };
@@ -65,11 +63,11 @@ export const ProfilePage: React.FC = () => {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.textContent = message;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => notification.classList.add('show'), 10);
-    
+
     setTimeout(() => {
       notification.classList.remove('show');
       setTimeout(() => notification.remove(), 300);
@@ -118,10 +116,7 @@ export const ProfilePage: React.FC = () => {
   return (
     <div className="profile-page">
       <div className="profile-container">
-        <ProfileCard 
-          profile={profile} 
-          onEdit={handleEditClick}
-        />
+        <ProfileCard profile={profile} onEdit={handleEditClick} />
       </div>
 
       {isEditing && (
@@ -132,11 +127,7 @@ export const ProfilePage: React.FC = () => {
         />
       )}
 
-      {saveError && (
-        <div className="global-error">
-          {saveError}
-        </div>
-      )}
+      {saveError && <div className="global-error">{saveError}</div>}
     </div>
   );
 };

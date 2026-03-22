@@ -1,7 +1,8 @@
 .profile-page {
-  min-height: calc(100vh - 64px); /* вычитаем высоту шапки, если есть */
-  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+  min-height: calc(100vh - 64px);
+  background: linear-gradient(135deg, #f8fafc 0%, #eef4fb 100%);
   padding: 40px 20px;
+  transition: background-color 0.25s ease;
 }
 
 .profile-container {
@@ -13,18 +14,20 @@
 .error-container,
 .not-found-container {
   background: white;
+  color: #1e293b;
   border-radius: 16px;
   padding: 48px;
   text-align: center;
   max-width: 400px;
   margin: 100px auto;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .loading-spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid #f3f3f3;
+  border: 4px solid #e5e7eb;
   border-top: 4px solid #2196f3;
   border-radius: 50%;
   margin: 0 auto 20px;
@@ -38,8 +41,9 @@
 
 .error-container h3,
 .not-found-container h3 {
-  color: #333;
+  color: #334155;
   margin-bottom: 16px;
+  transition: color 0.25s ease;
 }
 
 .error-message {
@@ -56,9 +60,48 @@
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.2s ease;
 }
 
 .retry-button:hover {
   background: #1976d2;
+  transform: translateY(-1px);
+}
+
+
+body[data-theme='dark'] .profile-page {
+  background: linear-gradient(135deg, #0f172a 0%, #111827 100%);
+}
+
+body[data-theme='dark'] .loading-container,
+body[data-theme='dark'] .error-container,
+body[data-theme='dark'] .not-found-container {
+  background: #1e293b;
+  color: #f8fafc;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+body[data-theme='dark'] .error-container h3,
+body[data-theme='dark'] .not-found-container h3 {
+  color: #f8fafc;
+}
+
+body[data-theme='dark'] .loading-container p,
+body[data-theme='dark'] .not-found-container p,
+body[data-theme='dark'] .error-container p {
+  color: #cbd5e1;
+}
+
+body[data-theme='dark'] .loading-spinner {
+  border: 4px solid rgba(255, 255, 255, 0.12);
+  border-top: 4px solid #90caf9;
+}
+
+body[data-theme='dark'] .retry-button {
+  background: #90caf9;
+  color: #0f172a;
+}
+
+body[data-theme='dark'] .retry-button:hover {
+  background: #64b5f6;
 }

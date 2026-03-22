@@ -27,6 +27,7 @@
   position: relative;
   animation: slideUp 0.3s ease-out;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
 }
 
 @keyframes slideUp {
@@ -51,6 +52,7 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .edit-profile-header h3 {
@@ -58,6 +60,7 @@
   font-size: 20px;
   color: #333;
   font-weight: 600;
+  transition: color 0.25s ease;
 }
 
 .close-button {
@@ -73,7 +76,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .close-button:hover:not(:disabled) {
@@ -100,6 +103,7 @@
   color: #333;
   font-weight: 500;
   font-size: 14px;
+  transition: color 0.25s ease;
 }
 
 .required {
@@ -112,6 +116,7 @@
   font-size: 12px;
   font-weight: normal;
   margin-left: 4px;
+  transition: color 0.25s ease;
 }
 
 .form-group input,
@@ -121,9 +126,16 @@
   border: 2px solid #e0e0e0;
   border-radius: 12px;
   font-size: 16px;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   box-sizing: border-box;
   font-family: inherit;
+  background-color: white;
+  color: #333;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #999;
 }
 
 .form-group input:focus,
@@ -154,6 +166,7 @@
   font-size: 12px;
   color: #999;
   margin-top: 4px;
+  transition: color 0.25s ease;
 }
 
 .form-error {
@@ -187,7 +200,7 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -248,6 +261,7 @@
   justify-content: center;
   border-radius: 20px;
   animation: fadeIn 0.2s ease-out;
+  transition: background-color 0.25s ease;
 }
 
 .saving-indicator {
@@ -268,4 +282,120 @@
   color: #333;
   font-size: 16px;
   margin: 0;
+  transition: color 0.25s ease;
+}
+
+
+body[data-theme='dark'] .edit-profile-modal {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+body[data-theme='dark'] .edit-profile-content {
+  background: #1e293b;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+body[data-theme='dark'] .edit-profile-header {
+  background: #1e293b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body[data-theme='dark'] .edit-profile-header h3 {
+  color: #f8fafc;
+}
+
+body[data-theme='dark'] .close-button {
+  color: #cbd5e1;
+}
+
+body[data-theme='dark'] .close-button:hover:not(:disabled) {
+  background-color: #334155;
+  color: #f8fafc;
+}
+
+body[data-theme='dark'] .form-group label {
+  color: #e2e8f0;
+}
+
+body[data-theme='dark'] .optional {
+  color: #94a3b8;
+}
+
+body[data-theme='dark'] .form-group input,
+body[data-theme='dark'] .form-group textarea {
+  background-color: #0f172a;
+  color: #f8fafc;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+body[data-theme='dark'] .form-group input::placeholder,
+body[data-theme='dark'] .form-group textarea::placeholder {
+  color: #94a3b8;
+}
+
+body[data-theme='dark'] .form-group input:focus,
+body[data-theme='dark'] .form-group textarea:focus {
+  border-color: #90caf9;
+  box-shadow: 0 0 0 3px rgba(144, 202, 249, 0.15);
+}
+
+body[data-theme='dark'] .form-group input:disabled,
+body[data-theme='dark'] .form-group textarea:disabled {
+  background-color: #1f2937;
+  color: #94a3b8;
+}
+
+body[data-theme='dark'] .textarea-counter {
+  color: #94a3b8;
+}
+
+body[data-theme='dark'] .form-error {
+  background-color: rgba(239, 68, 68, 0.14);
+  color: #fca5a5;
+}
+
+body[data-theme='dark'] .form-error svg {
+  fill: #fca5a5;
+}
+
+body[data-theme='dark'] .cancel-button {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  color: #cbd5e1;
+}
+
+body[data-theme='dark'] .cancel-button:hover:not(:disabled) {
+  background: #334155;
+  border-color: #475569;
+  color: #f8fafc;
+}
+
+body[data-theme='dark'] .save-button {
+  background: #90caf9;
+  border: 2px solid #90caf9;
+  color: #0f172a;
+}
+
+body[data-theme='dark'] .save-button:hover:not(:disabled) {
+  background: #64b5f6;
+  border-color: #64b5f6;
+  color: #0f172a;
+}
+
+body[data-theme='dark'] .spinner {
+  border: 2px solid rgba(15, 23, 42, 0.25);
+  border-top-color: #0f172a;
+}
+
+body[data-theme='dark'] .saving-overlay {
+  background: rgba(15, 23, 42, 0.88);
+}
+
+body[data-theme='dark'] .spinner-large {
+  border: 4px solid rgba(255, 255, 255, 0.14);
+  border-top-color: #90caf9;
+}
+
+body[data-theme='dark'] .saving-indicator p {
+  color: #f8fafc;
 }
