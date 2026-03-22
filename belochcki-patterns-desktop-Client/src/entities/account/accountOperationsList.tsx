@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Divider, Typography } from "@mui/material";
+import { Box, Card, CardContent, Divider, Typography, Chip } from "@mui/material";
 import type { AccountOperation } from "../../shared/api/account/accountOperations";
 
 type Props = {
@@ -9,9 +9,24 @@ const formatOperationDateTime = (date: string, time: string) => {
   return `${date} ${time}`;
 };
 
+const getOperationLabel = (operationType: string) => {
+  switch (operationType) {
+    case "TRANSFER_OUT":
+      return "Перевод списание";
+    case "TRANSFER_IN":
+      return "Перевод зачисление";
+    case "WITHDRAW":
+      return "Снятие";
+    case "DEPOSIT":
+      return "Пополнение";
+    default:
+      return operationType;
+  }
+};
+
 const formatAmount = (amount: number, operationType: string) => {
   if (operationType === "TRANSFER_OUT" || operationType === "WITHDRAW") {
-    return `- ${amount}`;
+    return `− ${amount}`;
   }
   if (operationType === "TRANSFER_IN" || operationType === "DEPOSIT") {
     return `+ ${amount}`;
@@ -19,35 +34,82 @@ const formatAmount = (amount: number, operationType: string) => {
   return `${amount}`;
 };
 
+const getAmountColor = (operationType: string) => {
+  if (operationType === "TRANSFER_OUT" || operationType === "WITHDRAW") {
+    return "error.main";
+  }
+  if (operationType === "TRANSFER_IN" || operationType === "DEPOSIT") {
+    return "success.main";
+  }
+  return "text.primary";
+};
+
 export const AccountOperationsList = ({ operations }: Props) => {
   return (
-    <Box sx={{ mt: 3, mb: 3 }}>
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        История операций
-      </Typography>
+    <Box sx={{ mt: 4, mb: 3 }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h5" fontWeight={700}>
+          История операций
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Последние действия по счёту
+        </Typography>
+      </Box>
 
       {operations.length === 0 ? (
-        <Typography variant="body1">Операций пока нет</Typography>
+        <Card variant="outlined" sx={{ borderRadius: 4, boxShadow: "none", p: 2 }}>
+          <Typography variant="body1">Операций пока нет</Typography>
+        </Card>
       ) : (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           {operations.map((operation) => (
-            <Card key={operation.id} variant="outlined">
-              <CardContent>
-                <Typography variant="subtitle1" fontWeight={700}>
-                  {operation.operationType}
-                </Typography>
+            <Card
+              key={operation.id}
+              variant="outlined"
+              sx={(theme) => ({
+                borderRadius: 4,
+                boxShadow: "none",
+                borderColor: theme.palette.divider,
+              })}
+            >
+              <CardContent sx={{ p: 3 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    gap: 2,
+                    flexWrap: "wrap",
+                    mb: 1.5,
+                  }}
+                >
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight={700}>
+                      {getOperationLabel(operation.operationType)}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {operation.comment || "Без комментария"}
+                    </Typography>
+                  </Box>
 
-                <Typography variant="body1">
-                  Сумма: {formatAmount(operation.amount, operation.operationType)}
-                </Typography>
+                  <Chip
+                    label={operation.operationType}
+                    size="small"
+                    variant="outlined"
+                  />
+                </Box>
 
-                <Typography variant="body2" color="text.secondary">
-                  Комментарий: {operation.comment || "—"}
+                <Typography
+                  variant="h6"
+                  fontWeight={700}
+                  sx={{ color: getAmountColor(operation.operationType), mb: 1.5 }}
+                >
+                  {formatAmount(operation.amount, operation.operationType)}
                 </Typography>
 
                 <Divider sx={{ my: 1.5 }} />
 
-                <Typography variant="caption" display="block">
+                <Typography variant="caption" color="text.secondary">
                   {formatOperationDateTime(operation.date, operation.time)}
                 </Typography>
               </CardContent>
