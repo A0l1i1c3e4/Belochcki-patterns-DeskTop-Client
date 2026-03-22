@@ -40,6 +40,15 @@ export const CreditAccountPage = () => {
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, md: 9 }}>
             <Box sx={{ display: "flex", flexDirection: "column", minHeight: 600 }}>
+                {!creditAccount?.balance == '0' &&(
+                  <Button
+                      variant="contained"
+                      sx={{ width: "50%"}}
+                      fullWidth
+                      onClick={() => setOpenForm(true)}
+                      > Операции
+                  </Button>
+                )}
                 <Box sx={{ flex: 1 }}>
                     {!creditAccount ? (
                     
@@ -51,13 +60,6 @@ export const CreditAccountPage = () => {
                     <CreditAccountCard account={creditAccount} />
                 )}
                 </Box>
-                <Button
-                    variant="contained"
-                    sx={{ width: "50%"}}
-                    fullWidth
-                    onClick={() => setOpenForm(true)}
-                    > Операции
-                </Button>
             </Box>
           </Grid>
         </Grid>

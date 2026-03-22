@@ -12,11 +12,13 @@ import { fetchDebitAccountOperations } from "../../shared/api/account/accountOpe
 import { connectAccountOperationsWs } from "../../shared/api/ws/accountOperationsWs";
 import { AccountOperationsList } from "../../entities/account/accountOperationsList";
 import {OperationDebitForm} from "../../features/accountOperations/accountOperations"
+import {ExchangeForm} from "../../features/accountOperations/superExchange"
 
 export const DebitAccountPage = () => {
   const [debitAccount, setDebitAccount] = useState<Account | null>(null);
   const [operations, setOperations] = useState<AccountOperation[]>([]);
   const [openForm, setOpenForm] = useState(false);
+  const [openForm2, setOpenForm2] = useState(false);
 
   const accountID = useParams().accountId;
   const navigate = useNavigate();
@@ -89,14 +91,26 @@ export const DebitAccountPage = () => {
         <Grid container spacing={4} sx={{ width: "100%" }}>
           <Grid size={{ xs: 12, md: 9 }}>
             <Box sx={{ display: "flex", flexDirection: "column", minHeight: 600 }}>
-              <Button
-                variant="contained"
-                sx={{ width: "50%" }}
-                fullWidth
-                onClick={() => setOpenForm(true)}
-              >
-                Операции
-              </Button>
+              {debitAccount?.status == "OPEN" &&(
+                  <Grid size={{ xs: 12, md: 9}}>
+                    <Button
+                    variant="contained"
+                    sx={{ width: "50%" }}
+                    fullWidth
+                    onClick={() => setOpenForm(true)}
+                  >
+                    Операции
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{ ml: "15px", width: "50%" }}
+                    fullWidth
+                    onClick={() => setOpenForm2(true)}
+                  >
+                    Переводы
+                  </Button>
+                </Grid>
+              )}
               <Box sx={{ flex: 1 }}>
                 {!debitAccount ? (
                   <Typography variant="body1" sx={{ textAlign: "center", mt: 4 }}>
@@ -118,6 +132,11 @@ export const DebitAccountPage = () => {
         <OperationDebitForm
           open={openForm}
           onClose={() => setOpenForm(false)}
+          onExchange={reloadPageData}
+        />
+        <ExchangeForm
+          open={openForm2}
+          onClose={() => setOpenForm2(false)}
           onExchange={reloadPageData}
         />
       </Box>
