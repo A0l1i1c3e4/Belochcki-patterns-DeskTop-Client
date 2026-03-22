@@ -19,7 +19,7 @@ export const AccountsPage = () => {
   const [total, setTotal] = useState(0);
   const [openForm, setOpenForm] = useState(false);
 
-  const pageSize = 6;
+  const pageSize = 200;
   const navigate = useNavigate();
 
   const handleRequestError = (err: any) => {
@@ -31,9 +31,8 @@ export const AccountsPage = () => {
 
   const loadDebitAccounts = async () => {
     try {
-      const data: AccountsResponse = await fetchDebitAccounts(page, pageSize);
-      setDebitAccounts(data?.content ?? []);
-      setTotal(data.totalPages ?? 0);
+      const data: Account[] = await fetchDebitAccounts();
+      setDebitAccounts(data);
     } catch (err: any) {
       handleRequestError(err);
     }
@@ -41,8 +40,8 @@ export const AccountsPage = () => {
 
   const loadCreditAccounts = async () => {
     try {
-      const data: AccountsResponse = await fetchCreditAccounts();
-      setCreditAccounts(data?.content ?? []);
+      const data: Account[] = await fetchCreditAccounts();
+      setCreditAccounts(data);
     } catch (err: any) {
       handleRequestError(err);
     }

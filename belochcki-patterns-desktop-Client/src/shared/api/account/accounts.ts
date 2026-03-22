@@ -17,37 +17,25 @@ export interface Account {
 }
 
 export interface AccountsResponse {
-  content: Account[];
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
+  data: Account[];
 }
 
-export const fetchDebitAccounts = async (page: number, size: number): Promise<AccountsResponse> => {
+export const fetchDebitAccounts = async (): Promise<Account[]> => {
   const id = localStorage.getItem("userId");
   const response = await axios.get("http://localhost:8085/api/gateway/accounts/clients/"+ id +"/debit-accounts", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
-    params: {
-      page: page - 1,
-      size,
-      sort: 'ASC',
-    },
   }); 
+  console.log(response.data)
   return response.data;
 };
 
-export const fetchCreditAccounts = async (): Promise<AccountsResponse> => {
+export const fetchCreditAccounts = async (): Promise<Account[]> => {
   const id = localStorage.getItem("userId");
   const response = await axios.get("http://localhost:8085/api/gateway/accounts/clients/"+ id +"/credit-accounts", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    },
-    params: {
-      page: 0,
-      size: 2,
-      sort: 'ASC',
     },
   });
 
