@@ -23,8 +23,8 @@ export const AccountCard = ({ account: account }: Props) => {
         <Typography variant="h6">{account.CurrencyCode}</Typography>
         <Typography variant="h6">{account.status}</Typography>
         <Typography variant="caption" display="block" sx={{ mt: 2 }}>
-          {new Date(account.createdTime + account.createdDate).toLocaleString()}
-        </Typography>
+          {`${account.createdDate} ${account.createdTime}`}
+        </Typography> 
       </CardContent>
     </Card>
   );
