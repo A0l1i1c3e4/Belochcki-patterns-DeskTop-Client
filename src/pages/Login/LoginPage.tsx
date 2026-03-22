@@ -4,6 +4,7 @@ import { Box, Typography, TextField, Button, MenuItem } from "@mui/material";
 
 interface LoginResponse {
   token: string;
+  userId: string;
 }
 
 export default function LoginPage() {
@@ -31,12 +32,13 @@ export default function LoginPage() {
 
       const data: LoginResponse = await response.json();
       const token = data.token;
+      const userId = data.userId;
       alert(token);
       localStorage.setItem("accessToken", data.token);
       if (role === "CLIENT") {
-      window.location.href = `http://localhost:5173/main?accessToken=${token}`;
+      window.location.href = `http://localhost:5173/main?accessToken=${token}&userId=${userId}`;
       } else {
-      window.location.href = `http://localhost:5174/main?accessToken=${token}`;
+      window.location.href = `http://localhost:5174/main?accessToken=${token}&userId=${userId}`;
       }
     } catch (error: any) {
       showToast(error.message);
