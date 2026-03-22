@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {Dialog,DialogTitle,DialogContent,DialogActions,Button,Box,Alert,Select,MenuItem,Typography,FormControl,InputLabel,} from "@mui/material";
+import {Dialog,DialogTitle,DialogContent,DialogActions,Button,Box,Alert,FormControl,InputLabel,Select,MenuItem,Typography,Stack,} from "@mui/material";
 import { fetchCreateDebitAccounts } from "../../shared/api/account/createDebitAccount";
 
 type Props = {
@@ -31,20 +31,26 @@ export const CreateDebitForm = ({ open, onClose, onDebitCreated }: Props) => {
     }
   };
 
+  const handleClose = () => {
+    setError("");
+    setCurrencyCode("");
+    onClose();
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ pb: 1 }}>
         <Typography variant="h5" fontWeight={700}>
           Создать дебетовый счёт
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Выберите валюту для нового дебетового счёта
+          Выберите валюту для нового счёта
         </Typography>
       </DialogTitle>
 
       <DialogContent>
-        <Box sx={{ mt: 2 }}>
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        <Stack spacing={2} sx={{ mt: 2 }}>
+          {error && <Alert severity="error">{error}</Alert>}
 
           <FormControl fullWidth>
             <InputLabel id="currency-label">Валюта</InputLabel>
@@ -59,11 +65,27 @@ export const CreateDebitForm = ({ open, onClose, onDebitCreated }: Props) => {
               <MenuItem value="EUR">EUR — Евро</MenuItem>
             </Select>
           </FormControl>
-        </Box>
+
+          <Box
+            sx={(theme) => ({
+              p: 2,
+              borderRadius: 3,
+              backgroundColor:
+                theme.palette.mode === "dark"
+                  ? "rgba(144, 202, 249, 0.08)"
+                  : "rgba(25, 118, 210, 0.06)",
+              border: `1px solid ${theme.palette.divider}`,
+            })}
+          >
+            <Typography variant="body2" color="text.secondary">
+              После создания счёт появится в списке ваших дебетовых счетов.
+            </Typography>
+          </Box>
+        </Stack>
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 3 }}>
-        <Button variant="outlined" onClick={onClose} sx={{ borderRadius: 3 }}>
+        <Button variant="outlined" onClick={handleClose} sx={{ borderRadius: 3 }}>
           Отмена
         </Button>
         <Button variant="contained" onClick={handleSubmit} sx={{ borderRadius: 3 }}>

@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Divider, Typography, Chip } from "@mui/material";
+import { Box, Card, CardContent, Divider, Typography, Chip, Stack } from "@mui/material";
 import type { AccountOperation } from "../../shared/api/account/accountOperations";
 
 type Props = {
@@ -57,11 +57,14 @@ export const AccountOperationsList = ({ operations }: Props) => {
       </Box>
 
       {operations.length === 0 ? (
-        <Card variant="outlined" sx={{ borderRadius: 4, boxShadow: "none", p: 2 }}>
+        <Card
+          variant="outlined"
+          sx={{ borderRadius: 4, boxShadow: "none", p: 2 }}
+        >
           <Typography variant="body1">Операций пока нет</Typography>
         </Card>
       ) : (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Stack spacing={2}>
           {operations.map((operation) => (
             <Card
               key={operation.id}
@@ -73,15 +76,12 @@ export const AccountOperationsList = ({ operations }: Props) => {
               })}
             >
               <CardContent sx={{ p: 3 }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    gap: 2,
-                    flexWrap: "wrap",
-                    mb: 1.5,
-                  }}
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  justifyContent="space-between"
+                  alignItems={{ xs: "flex-start", sm: "flex-start" }}
+                  spacing={2}
+                  sx={{ mb: 1.5 }}
                 >
                   <Box>
                     <Typography variant="subtitle1" fontWeight={700}>
@@ -97,7 +97,7 @@ export const AccountOperationsList = ({ operations }: Props) => {
                     size="small"
                     variant="outlined"
                   />
-                </Box>
+                </Stack>
 
                 <Typography
                   variant="h6"
@@ -115,7 +115,7 @@ export const AccountOperationsList = ({ operations }: Props) => {
               </CardContent>
             </Card>
           ))}
-        </Box>
+        </Stack>
       )}
     </Box>
   );
