@@ -17,7 +17,7 @@ export const AccountsPage = () => {
   
   const loadDebitAccounts = async () => {
     try {
-      localStorage.setItem("accessToken", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjOGQ0MGVlYi02ZWY2LTQ2MDQtOTk0OC0yZmVjMWMyMTgwYjkiLCJzY29wZSI6IkVNUExPWUVFIENMSUVOVCIsImxvZ2luIjoic3RyaW5nIiwiaWF0IjoxNzc0MTI4Nzg2LCJleHAiOjE3NzQxMzIzODZ9.wpMBAw_GLGdiZ8sL7v5joA2IeloxJATjNowkAG1yILs");
+      localStorage.setItem("accessToken", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjOGQ0MGVlYi02ZWY2LTQ2MDQtOTk0OC0yZmVjMWMyMTgwYjkiLCJzY29wZSI6IkVNUExPWUVFIENMSUVOVCIsImxvZ2luIjoic3RyaW5nIiwiaWF0IjoxNzc0MTY0Mjg0LCJleHAiOjE3NzQxNjc4ODR9.Ak5ihyh5RzWq4rwKy3StKvo5muDMrwiNshJ4VCEZ6Ek");
       localStorage.setItem("clientID", "c8d40eeb-6ef6-4604-9948-2fec1c2180b9");
       const data: AccountsResponse = await fetchDebitAccounts(page, pageSize);
 
@@ -60,11 +60,11 @@ export const AccountsPage = () => {
         onClick={() => setOpenForm(true)}
       > Открыть новый дебетовый счёт
       </Button>
-      <Box sx={{ p: 4, display: "flex",  flexDirection: "row" }}>
+      <Box sx={{ p: 4, display: "flex",  flexDirection: "row", width: "70%"}}>
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, md: 9 }}>
-            <Box sx={{ display: "flex", flexDirection: "column", minHeight: 600 }}>
-              <Box sx={{ flex: 1 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", minHeight: 600, width: "100%"}}>
+              <Box sx={{ flex: 1, width: "100%" }}>
                 {debitAccounts.length === 0 ? (
                   <Typography variant="body1" sx={{ textAlign: "center", mt: 4 }}>
                     Дебетовые счета не найдены

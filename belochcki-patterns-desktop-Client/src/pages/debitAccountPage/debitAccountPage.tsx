@@ -4,7 +4,7 @@ import { Box, Grid, Typography, Button} from "@mui/material";
 import type {Account} from "../../shared/api/account/accounts";
 import { fetchDebitAccount } from "../../shared/api/account/accounts";
 import { AccountCard} from "../../entities/account/accountCard";
-import { OperationDebitForm } from "../../features/accountOperations/debitAccountOperations";
+import { OperationDebitForm } from "../../features/accountOperations/accountOperations";
 
 export const DebitAccountPage = () => {
   const [debitAccount, setDebitAccount] = useState<Account | null>(null);
@@ -28,7 +28,7 @@ export const DebitAccountPage = () => {
 
   useEffect(() => {
     loadDebitAccount();
-  },);
+  }, []);
   
 
   return (

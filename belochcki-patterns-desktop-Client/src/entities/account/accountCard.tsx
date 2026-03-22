@@ -41,7 +41,7 @@ export const CreditAccountCard = ({ account: account }: Props) => {
     <Card
       onClick={handleClick}
       sx={{ cursor: "pointer" }}>
-      <CardContent>
+      <CardContent sx={{ p: 4, width: "100%", display: "flex",  flexDirection: "column" }}>
         <Typography variant="h6">{account.name}</Typography>
         <Typography variant="h6">{account.balance}</Typography>
         <Typography variant="h6">{account.CurrencyCode}</Typography>
