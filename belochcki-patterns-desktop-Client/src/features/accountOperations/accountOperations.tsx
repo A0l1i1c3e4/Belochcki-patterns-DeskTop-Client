@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams} from "react-router-dom";
 import { Box, Button, MenuItem, Select, Dialog, DialogTitle, DialogContent, DialogActions, Alert, TextField } from "@mui/material";
-import { fetchExchangeAccounts } from "../../shared/api/account/exchangeDebit";
+import { fetchExchangeAccounts, fetchCloseDebitAccounts} from "../../shared/api/account/exchangeDebit";
 import type { OperationType } from "../../shared/api/account/exchangeDebit";
 type Props = {
   open: boolean;
@@ -34,6 +34,17 @@ export const OperationDebitForm = ({ open, onClose, onExchange: onExchange }: Pr
     }
   };
 
+  const closeAccount = async () => {
+    try {
+    await fetchCloseDebitAccounts(accountID);
+    setError("");
+    onClose();
+    } catch (e) {
+    console.error("CLOSE DEBIT ACCOUNT ERROR", e);
+    setError("Ошибка при закрытии дебита");
+    }
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Пополнение и снятие</DialogTitle>
@@ -50,6 +61,7 @@ export const OperationDebitForm = ({ open, onClose, onExchange: onExchange }: Pr
       </DialogContent>
 
       <DialogActions>
+        <Button variant="contained" onClick={closeAccount}>Закрыть</Button>
         <Button variant="contained" onClick={handleSubmit}>Обработать</Button>
         <Button variant="outlined" onClick={onClose}>Отмена</Button>
       </DialogActions>

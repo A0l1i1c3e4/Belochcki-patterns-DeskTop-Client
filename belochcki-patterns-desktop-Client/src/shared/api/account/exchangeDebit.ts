@@ -17,3 +17,14 @@ export const fetchExchangeAccounts = async (data: DebitExchange, accountId: stri
   });
   return response.data;
 };
+
+export const fetchCloseDebitAccounts = async (accountId: string) => {
+  const token = localStorage.getItem("accessToken");
+  const id = localStorage.getItem("clientID");
+  const response = await axios.post("http://localhost:8085/api/gateway/accounts/clients/" + id + "/debit-accounts/" + accountId + "/close", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
