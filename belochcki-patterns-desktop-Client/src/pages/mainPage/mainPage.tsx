@@ -1,9 +1,23 @@
 import { Link} from "react-router-dom";
 import { Box, Button } from "@mui/material";
-
-
+import {useEffect} from "react";
 
 export const MainPage = () => {
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("accessToken");
+        if (token) {
+          localStorage.setItem("accessToken", token);
+          window.history.replaceState({}, document.title, "/");
+        }
+        console.log(token);
+
+        const testToken = localStorage.getItem('accessToken');
+
+        if (!testToken){
+            window.location.href = "http://localhost:666/main";
+        }
+      }, []);
 
   return (
     <Box sx={{ display: "flex", gap: 2, alignItems: "center" , flexDirection: "column", width: "80%", ml: "10%", mr: "10%", mt: "20%"}}>

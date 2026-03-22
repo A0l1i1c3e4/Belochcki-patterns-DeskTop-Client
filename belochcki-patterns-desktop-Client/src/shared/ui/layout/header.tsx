@@ -1,13 +1,11 @@
 import { AppBar, Toolbar, Typography, Button, Box, IconButton } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 export default function Header() {
-  const navigate = useNavigate();
-
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
-    navigate("/login");
+    window.location.href = "http://localhost:666/main";
   };
 
   return (
