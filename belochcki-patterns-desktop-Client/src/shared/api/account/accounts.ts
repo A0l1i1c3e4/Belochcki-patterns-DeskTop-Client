@@ -53,7 +53,7 @@ export const fetchCreditAccounts = async (): Promise<AccountsResponse> => {
 };
 
 export const fetchDebitAccount = async (accountId: string): Promise<Account> => {
-  const id = localStorage.getItem("clientID");
+  const id = localStorage.getItem("userId");
   const response = await axios.get("http://localhost:8085/api/gateway/accounts/clients/"+ id +"/debit-accounts/" + accountId + "?role=CLIENT", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -63,7 +63,7 @@ export const fetchDebitAccount = async (accountId: string): Promise<Account> => 
 };
 
 export const fetchCreditAccount = async (accountId: string): Promise<Account> => {
-  const id = localStorage.getItem("clientID");
+  const id = localStorage.getItem("userId");
   const response = await axios.get("http://localhost:8085/api/gateway/accounts/clients/"+ id +"/credit-accounts/" + accountId + "?role=CLIENT", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

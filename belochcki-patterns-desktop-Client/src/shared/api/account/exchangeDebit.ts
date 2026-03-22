@@ -9,7 +9,7 @@ export interface DebitExchange {
 
 export const fetchExchangeAccounts = async (data: DebitExchange, accountId: string, operationType: OperationType, accountType: string) => {
   const token = localStorage.getItem("accessToken");
-  const id = localStorage.getItem("clientID");
+  const id = localStorage.getItem("userId");
   const response = await axios.post("http://localhost:8085/api/gateway/accounts/clients/" + id + "/" + accountType + "-accounts/" + accountId + "/" + operationType, data, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -20,7 +20,7 @@ export const fetchExchangeAccounts = async (data: DebitExchange, accountId: stri
 
 export const fetchCloseDebitAccounts = async (accountId: string) => {
   const token = localStorage.getItem("accessToken");
-  const id = localStorage.getItem("clientID");
+  const id = localStorage.getItem("userId");
   const response = await axios.post("http://localhost:8085/api/gateway/accounts/clients/" + id + "/debit-accounts/" + accountId + "/close", {
     headers: {
       Authorization: `Bearer ${token}`,

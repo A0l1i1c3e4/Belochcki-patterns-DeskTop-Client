@@ -31,7 +31,7 @@ export const fetchDebitAccountOperations = async (
   page = 1,
   size = 200
 ): Promise<AccountOperationsResponse> => {
-  const clientId = localStorage.getItem("clientID");
+  const clientId = localStorage.getItem("userId");
 
   const response = await axios.get(
     `http://localhost:8085/api/gateway/accounts/clients/${clientId}/accounts/${accountId}/operations`,

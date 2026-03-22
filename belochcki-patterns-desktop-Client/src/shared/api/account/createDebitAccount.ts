@@ -6,7 +6,7 @@ export interface AccountQuery {
 
 export const fetchCreateDebitAccounts = async (data: AccountQuery) => {
   const token = localStorage.getItem("accessToken");
-  const id = localStorage.getItem("clientID");
+  const id = localStorage.getItem("userId");
   const response = await axios.post("http://localhost:8085/api/gateway/accounts/clients/" +  id + "/debit-accounts", data, {
     headers: {
       Authorization: `Bearer ${token}`,

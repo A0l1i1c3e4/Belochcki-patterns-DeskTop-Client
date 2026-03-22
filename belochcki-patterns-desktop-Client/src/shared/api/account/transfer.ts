@@ -9,7 +9,7 @@ export interface Transfer {
 
 export const fetchTransfer = async (data: Transfer) => {
   const token = localStorage.getItem("accessToken");
-  const id = localStorage.getItem("clientID");
+  const id = localStorage.getItem("userId");
   const response = await axios.post("http://localhost:8085/api/gateway/accounts/clients/" + id + "/debit-accounts/transfer", data, {
     headers: {
       Authorization: `Bearer ${token}`,
