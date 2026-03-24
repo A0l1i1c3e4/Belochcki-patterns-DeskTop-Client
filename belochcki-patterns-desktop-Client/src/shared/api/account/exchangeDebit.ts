@@ -21,7 +21,7 @@ export const fetchExchangeAccounts = async (data: DebitExchange, accountId: stri
 export const fetchCloseDebitAccounts = async (accountId: string) => {
   const token = localStorage.getItem("accessToken");
   const id = localStorage.getItem("userId");
-  const response = await axios.post("http://localhost:8085/api/gateway/accounts/clients/" + id + "/debit-accounts/" + accountId + "/close", {
+  const response = await axios.post("http://localhost:8085/api/gateway/accounts/clients/" + id + "/debit-accounts/" + accountId + "/close", '123', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
