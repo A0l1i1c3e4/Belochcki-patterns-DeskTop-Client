@@ -7,24 +7,58 @@ export interface DebitExchange {
   comment: string;
 }
 
-export const fetchExchangeAccounts = async (data: DebitExchange, accountId: string, operationType: OperationType, accountType: string) => {
+export const fetchExchangeAccounts = async (
+  data: DebitExchange,
+  accountId: string,
+  operationType: OperationType,
+  accountType: string,
+  idempotencyKey?: string
+) => {
   const token = localStorage.getItem("accessToken");
   const id = localStorage.getItem("userId");
-  const response = await axios.post("http://localhost:8085/api/gateway/accounts/clients/" + id + "/" + accountType + "-accounts/" + accountId + "/" + operationType, data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+
+  const response = await axios.post(
+    "http://localhost:8085/api/gateway/accounts/clients/" +
+      id +
+      "/" +
+      accountType +
+      "-accounts/" +
+      accountId +
+      "/" +
+      operationType,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
+      },
+    }
+  );
+
   return response.data;
 };
 
-export const fetchCloseDebitAccounts = async (accountId: string) => {
+export const fetchCloseDebitAccounts = async (
+  accountId: string,
+  idempotencyKey?: string
+) => {
   const token = localStorage.getItem("accessToken");
   const id = localStorage.getItem("userId");
-  const response = await axios.post("http://localhost:8085/api/gateway/accounts/clients/" + id + "/debit-accounts/" + accountId + "/close", '123', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+
+  const response = await axios.post(
+    "http://localhost:8085/api/gateway/accounts/clients/" +
+      id +
+      "/debit-accounts/" +
+      accountId +
+      "/close",
+    "123",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
+      },
+    }
+  );
+
   return response.data;
 };
