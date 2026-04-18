@@ -31,7 +31,7 @@ export const DebitAccountPage = () => {
     } catch (err: any) {
       const status = err.response?.status;
       if (status === 401) navigate("/login");
-      else if (status === 500) navigate("/error-500");
+      //else if (status === 500) navigate("/error-500");
       else console.error("Ошибка при загрузке счёта", err);
     }
   }, [accountID, navigate]);
@@ -44,7 +44,7 @@ export const DebitAccountPage = () => {
     } catch (err: any) {
       const status = err.response?.status;
       if (status === 401) navigate("/login");
-      else if (status === 500) navigate("/error-500");
+      //else if (status === 500) navigate("/error-500");
       else console.error("Ошибка при загрузке операций", err);
     }
   }, [accountID, navigate]);

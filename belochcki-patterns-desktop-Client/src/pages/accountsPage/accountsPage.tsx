@@ -25,7 +25,7 @@ export const AccountsPage = () => {
   const handleRequestError = (err: any) => {
     const status = err.response?.status;
     if (status === 401) navigate("/login");
-    else if (status === 500) navigate("/error-500");
+    //else if (status === 500) navigate("/error-500");
     else console.error("Неизвестная ошибка", err);
   };
 
