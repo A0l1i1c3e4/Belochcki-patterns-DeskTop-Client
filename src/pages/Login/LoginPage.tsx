@@ -2,6 +2,9 @@ import type { SyntheticEvent } from "react";
 import { useState } from "react";
 import { Box, Typography, TextField, Button, MenuItem } from "@mui/material";
 
+import { apiRequest } from "../../shared/api/ApiClient";
+import { SERVICES } from "../../shared/api/Services";
+
 interface LoginResponse {
   token: string;
   userId: string;
@@ -18,30 +21,32 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8085/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ login, password, role }),
-      });
+      const data = await apiRequest<LoginResponse>(
+        SERVICES.AUTH,
+        "/api/auth/login",
+        {
+          method: "POST",
+          body: {
+            login,
+            password,
+            role,
+          },
+        }
+      );
 
-      if (!response.ok) {
-        throw new Error("Неверный логин или пароль");
-      }
-
-      const data: LoginResponse = await response.json();
       const token = data.token;
       const userId = data.userId;
-      alert(token);
-      localStorage.setItem("accessToken", data.token);
-      if (role === "CLIENT") {
-      window.location.href = `http://localhost:5173/main?accessToken=${token}&userId=${userId}`;
-      } else {
-      window.location.href = `http://localhost:5174/main?accessToken=${token}&userId=${userId}`;
-      }
+
+      localStorage.setItem("accessToken", token);
+
+      const baseUrl =
+        role === "CLIENT"
+          ? "http://localhost:5173"
+          : "http://localhost:5174";
+
+      window.location.href = `${baseUrl}/main?accessToken=${token}&userId=${userId}`;
     } catch (error: any) {
-      showToast(error.message);
+      showToast(error?.data?.message || error?.message || "Login error");
     } finally {
       setLoading(false);
     }
@@ -66,32 +71,30 @@ export default function LoginPage() {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f0f0f0',
-        padding: 2
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#f0f0f0",
+        padding: 2,
       }}
     >
       <Box
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
+          display: "flex",
+          flexDirection: "column",
           gap: 2,
-          width: { xs: '100%', sm: '400px' },
+          width: { xs: "100%", sm: "400px" },
           padding: 4,
-          bgcolor: 'white',
+          bgcolor: "white",
           borderRadius: 2,
           boxShadow: 3,
-          textAlign: 'center'
+          textAlign: "center",
         }}
       >
-        <Typography variant="h5" component="h2">
-          Login
-        </Typography>
+        <Typography variant="h5">Login</Typography>
 
         <TextField
           label="Login"
@@ -112,14 +115,14 @@ export default function LoginPage() {
           select
           label="Role"
           value={role}
-          onChange={(e) => setRole(e.target.value as 'CLIENT' | 'EMPLOYEE')}
+          onChange={(e) => setRole(e.target.value as "CLIENT" | "EMPLOYEE")}
         >
           <MenuItem value="CLIENT">CLIENT</MenuItem>
           <MenuItem value="EMPLOYEE">EMPLOYEE</MenuItem>
         </TextField>
 
         <Button type="submit" variant="contained" disabled={loading}>
-          {loading ? 'Loading...' : 'Login'}
+          {loading ? "Loading..." : "Login"}
         </Button>
       </Box>
     </Box>
