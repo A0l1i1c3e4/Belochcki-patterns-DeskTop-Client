@@ -4,6 +4,8 @@ import { Box, Typography, TextField, Button, MenuItem } from "@mui/material";
 
 import { apiRequest } from "../../shared/api/ApiClient";
 import { SERVICES } from "../../shared/api/Services";
+import { registerServiceWorker } from "../../shared/push/RegisterServiceWorker";
+import { subscribeUser } from "../../shared/push/subscribe";
 
 interface LoginResponse {
   token: string;
@@ -22,7 +24,7 @@ export default function LoginPage() {
 
     try {
       const data = await apiRequest<LoginResponse>(
-        SERVICES.AUTH,
+        SERVICES.GATEWAY,
         "/api/auth/login",
         {
           method: "POST",
@@ -38,6 +40,10 @@ export default function LoginPage() {
       const userId = data.userId;
 
       localStorage.setItem("accessToken", token);
+
+      await Notification.requestPermission();
+      await registerServiceWorker();
+      await subscribeUser(Number(userId));
 
       const baseUrl =
         role === "CLIENT"

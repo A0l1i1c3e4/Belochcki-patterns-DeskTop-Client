@@ -4,15 +4,15 @@ type CircuitStats = {
   success: number;
   failure: number;
   state: CircuitState;
+  windowStart: number;
   nextTry: number;
-  halfOpenInProgress: boolean;
 };
 
-const STORAGE_KEY = "circuits_v1";
+const STORAGE_KEY = "circuits_v3";
 
-const FAILURE_THRESHOLD = 0.5;
-const MIN_REQUESTS = 5;
-const OPEN_TIMEOUT = 10000;
+const WINDOW_MS = 60_000;
+const FAILURE_THRESHOLD = 0.7;
+const OPEN_TIMEOUT = 10_000;
 
 function loadCircuits(): Record<string, CircuitStats> {
   try {
@@ -33,39 +33,51 @@ function saveCircuits(): void {
 }
 
 function getOrCreate(key: string): CircuitStats {
+  const now = Date.now();
+
   if (!circuits[key]) {
     circuits[key] = {
       success: 0,
       failure: 0,
       state: "CLOSED",
+      windowStart: now,
       nextTry: 0,
-      halfOpenInProgress: false,
     };
     saveCircuits();
   }
-  return circuits[key];
+
+  const circuit = circuits[key];
+
+  // OPEN state check
+  if (circuit.state === "OPEN") {
+    if (now >= circuit.nextTry) {
+      circuit.state = "HALF_OPEN";
+      circuit.success = 0;
+      circuit.failure = 0;
+      circuit.windowStart = now;
+    } else {
+      saveCircuits();
+      return circuit;
+    }
+  }
+
+  // window evaluation (1 minute bucket)
+  if (now - circuit.windowStart >= WINDOW_MS) {
+    evaluateAndReset(circuit);
+  }
+
+  saveCircuits();
+  return circuit;
 }
 
 export function canRequest(key: string): boolean {
   const circuit = getOrCreate(key);
-  const now = Date.now();
 
   if (circuit.state === "OPEN") {
-    if (now >= circuit.nextTry) {
-      circuit.state = "HALF_OPEN";
-      circuit.halfOpenInProgress = false;
-      saveCircuits();
-    } else {
-      return false;
-    }
+    return false;
   }
 
   if (circuit.state === "HALF_OPEN") {
-    if (circuit.halfOpenInProgress) {
-      return false;
-    }
-    circuit.halfOpenInProgress = true;
-    saveCircuits();
     return true;
   }
 
@@ -75,11 +87,7 @@ export function canRequest(key: string): boolean {
 export function onSuccess(key: string): void {
   const circuit = getOrCreate(key);
 
-  if (circuit.state === "HALF_OPEN") {
-    resetCircuit(circuit);
-    saveCircuits();
-    return;
-  }
+  if (circuit.state === "OPEN") return;
 
   circuit.success++;
   saveCircuits();
@@ -88,39 +96,31 @@ export function onSuccess(key: string): void {
 export function onFailure(key: string): void {
   const circuit = getOrCreate(key);
 
-  if (circuit.state === "HALF_OPEN") {
-    openCircuit(circuit);
-    saveCircuits();
-    return;
-  }
+  if (circuit.state === "OPEN") return;
 
   circuit.failure++;
-
-  const total = circuit.success + circuit.failure;
-
-  if (total >= MIN_REQUESTS) {
-    const errorRate = circuit.failure / total;
-
-    if (errorRate >= FAILURE_THRESHOLD) {
-      openCircuit(circuit);
-      saveCircuits();
-      return;
-    }
-  }
-
   saveCircuits();
 }
 
-function openCircuit(circuit: CircuitStats): void {
-  circuit.state = "OPEN";
-  circuit.nextTry = Date.now() + OPEN_TIMEOUT;
-}
+function evaluateAndReset(circuit: CircuitStats): void {
+  const total = circuit.success + circuit.failure;
 
-function resetCircuit(circuit: CircuitStats): void {
-  circuit.state = "CLOSED";
+  if (total > 0) {
+    const errorRate = circuit.failure / total;
+
+    if (errorRate >= FAILURE_THRESHOLD) {
+      circuit.state = "OPEN";
+      circuit.nextTry = Date.now() + OPEN_TIMEOUT;
+    } else {
+      circuit.state = "CLOSED";
+    }
+  } else {
+    circuit.state = "CLOSED";
+  }
+
   circuit.success = 0;
   circuit.failure = 0;
-  circuit.halfOpenInProgress = false;
+  circuit.windowStart = Date.now();
 }
 
 export function getCircuitState(key: string): CircuitState {
