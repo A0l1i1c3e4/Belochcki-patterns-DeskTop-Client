@@ -1,75 +1,83 @@
-import { useEffect, useState} from "react";
-import { useNavigate, Link, useParams} from "react-router-dom";
-import { Box, Grid, Typography, Button} from "@mui/material";
-import type {Account} from "../../shared/api/account/accounts";
-import { fetchCreditAccount } from "../../shared/api/account/accounts";
+import { useEffect, useState } from "react";
+import { useNavigate, Link, useParams } from "react-router-dom";
+import { Box, Grid, Typography, Button, Paper } from "@mui/material";
+import type { Account } from "../../shared/api/account/accounts";
 import { CreditAccountCard } from "../../entities/account/accountCard";
 import { OperationCreditForm } from "../../features/accountOperations/accountOperations";
+import { apiRequest } from "../../shared/api/ApiClient";
+import { SERVICES } from "../../types/Services";
 
 export const CreditAccountPage = () => {
-  const [creditAccount, setCreditAccount] = useState<Account | null>(null);
+  const [account, setAccount] = useState<Account | null>(null);
   const [openForm, setOpenForm] = useState(false);
-  const accountID = useParams().accountId;
-  
-  const navigate = useNavigate();
-  
-  const loadCreditAccount = async () => {
-    try {
-      const data: Account = await fetchCreditAccount(accountID);
 
-      setCreditAccount(data);
+  const { accountId } = useParams();
+  const navigate = useNavigate();
+
+  const handleError = (err: any) => {
+    if (err?.status === 401) {
+      navigate("/login");
+      return;
+    }
+
+    if (err?.status === 503) {
+      console.warn("CREDITS circuit open");
+      return;
+    }
+
+    console.error("Credit account error", err);
+  };
+
+  const loadAccount = async () => {
+    try {
+      const data = await apiRequest<Account>(
+        SERVICES.CREDITS,
+        `/accounts/credit/${accountId}`
+      );
+
+      setAccount(data);
     } catch (err: any) {
-      const status = err.response?.status;
-      if (status === 401) navigate("/login");
-      //else if (status === 500) navigate("/error-500");
-      else console.error("Неизвестная ошибка при загрузке постов", err);
+      handleError(err);
     }
   };
 
   useEffect(() => {
-    loadCreditAccount();
+    loadAccount();
   }, []);
-  
 
   return (
-    <Box sx={{ display: "flex", gap: 2, alignItems: "center" , flexDirection: "column", width: "70%"}}>
-        <Link to={`/accounts`} >
-            ← Вернутся к всем счетам
-        </Link>
-      <Box sx={{ p: 4, display: "flex",  flexDirection: "row" }}>
-        <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 9 }}>
-            <Box sx={{ display: "flex", flexDirection: "column", minHeight: 600 }}>
-                {!creditAccount?.balance == '0' &&(
-                  <Button
-                      variant="contained"
-                      sx={{ width: "50%"}}
-                      fullWidth
-                      onClick={() => setOpenForm(true)}
-                      > Операции
-                  </Button>
-                )}
-                <Box sx={{ flex: 1 }}>
-                    {!creditAccount ? (
-                    
-                    <Typography variant="body1" sx={{ textAlign: "center", mt: 4 }}>
-                    Загрузка...
-                    </Typography>
-                ) : (
-                    
-                    <CreditAccountCard account={creditAccount} />
-                )}
-                </Box>
-            </Box>
+    <Box sx={{ maxWidth: 1000, mx: "auto", p: 4 }}>
+      <Link to="/accounts">← Назад</Link>
+
+      <Paper sx={{ p: 4, mt: 2, borderRadius: 4 }}>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12 }}>
+            {account && account.balance !== "0" && (
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={() => setOpenForm(true)}
+              >
+                Операции
+              </Button>
+            )}
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            {!account ? (
+              <Typography>Загрузка...</Typography>
+            ) : (
+              <CreditAccountCard account={account} />
+            )}
           </Grid>
         </Grid>
-        <OperationCreditForm
-          open={openForm}
-          onClose={() => setOpenForm(false)}
-          onExchange={loadCreditAccount}
-        />
-      </Box>
+      </Paper>
+
+      <OperationCreditForm
+        open={openForm}
+        onClose={() => setOpenForm(false)}
+        onExchange={loadAccount}
+      />
     </Box>
   );
 };
-

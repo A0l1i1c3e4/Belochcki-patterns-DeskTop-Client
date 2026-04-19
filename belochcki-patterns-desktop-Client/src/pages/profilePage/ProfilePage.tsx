@@ -1,133 +1,95 @@
-import React, { useEffect, useState } from 'react';
-import { ProfileCard } from '../../entities/profile/ProfileCard';
-import { EditProfile } from '../../features/editProfile/EditProfile';
-import { profileApi } from '../../shared/api/profileApi';
+import React, { useEffect, useState } from "react";
+import { ProfileCard } from "../../entities/profile/ProfileCard";
+import { EditProfile } from "../../features/editProfile/EditProfile";
+import { apiRequest } from "../../shared/api/ApiClient";
+import { SERVICES } from "../../types/Services";
 
-import type {EmployeeProfile,UpdateEmployeeProfileDto,} from '../../shared/api/types/UserProfile';
-import './ProfilePage.css';
+import type {
+  EmployeeProfile,
+  UpdateEmployeeProfileDto,
+} from "../../shared/api/types/UserProfile";
+
+import "./ProfilePage.css";
 
 export const ProfilePage: React.FC = () => {
   const [profile, setProfile] = useState<EmployeeProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
+  const handleError = (err: any, setErr?: (v: string) => void) => {
+    if (err?.status === 401) {
+      window.location.href = "/login";
+      return;
+    }
 
-  const loadProfile = async () => {
+    if (err?.status === 503) {
+      console.warn("PROFILE circuit open");
+      return;
+    }
+
+    const msg = err?.message || "Ошибка";
+    setErr?.(msg);
+    console.error(msg, err);
+  };
+
+  const load = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await profileApi.getProfile();
-      setProfile(response.data);
+      const data = await apiRequest<EmployeeProfile>(
+        SERVICES.CORE,
+        `/profile`
+      );
+
+      setProfile(data);
     } catch (err: any) {
-      setError(err.message || 'Не удалось загрузить профиль');
-      console.error('Error loading profile:', err);
+      handleError(err, setError);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-    setSaveError(null);
-  };
+  useEffect(() => {
+    load();
+  }, []);
 
-  const handleCloseEdit = () => {
-    setIsEditing(false);
-    setSaveError(null);
-  };
-
-  const handleSaveProfile = async (updatedData: UpdateEmployeeProfileDto) => {
+  const handleSave = async (dto: UpdateEmployeeProfileDto) => {
     try {
       setSaveError(null);
 
-      const response = await profileApi.updateProfile(updatedData);
-      setProfile(response.data);
+      const data = await apiRequest<EmployeeProfile>(
+        SERVICES.CORE,
+        `/profile`,
+        { method: "PUT", body: dto }
+      );
 
-      showNotification('Профиль успешно обновлен!', 'success');
+      setProfile(data);
     } catch (err: any) {
-      const errorMessage = err.message || 'Ошибка при сохранении профиля';
-      setSaveError(errorMessage);
-
-      showNotification(errorMessage, 'error');
+      handleError(err, setSaveError);
       throw err;
     }
   };
 
-  const showNotification = (message: string, type: 'success' | 'error') => {
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-
-    document.body.appendChild(notification);
-
-    setTimeout(() => notification.classList.add('show'), 10);
-
-    setTimeout(() => {
-      notification.classList.remove('show');
-      setTimeout(() => notification.remove(), 300);
-    }, 3000);
-  };
-
-  if (loading) {
-    return (
-      <div className="profile-page">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Загрузка профиля...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="profile-page">
-        <div className="error-container">
-          <h3>Ошибка загрузки профиля</h3>
-          <p className="error-message">{error}</p>
-          <button className="retry-button" onClick={loadProfile}>
-            Попробовать снова
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className="profile-page">
-        <div className="not-found-container">
-          <h3>Профиль не найден</h3>
-          <p>Возможно, пользователь был удален</p>
-          <button className="retry-button" onClick={loadProfile}>
-            Обновить
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <div>Загрузка...</div>;
+  if (error) return <div>{error}</div>;
+  if (!profile) return <div>Нет профиля</div>;
 
   return (
     <div className="profile-page">
-      <div className="profile-container">
-        <ProfileCard profile={profile} onEdit={handleEditClick} />
-      </div>
+      <ProfileCard profile={profile} onEdit={() => setEditing(true)} />
 
-      {isEditing && (
+      {editing && (
         <EditProfile
           profile={profile}
-          onClose={handleCloseEdit}
-          onSave={handleSaveProfile}
+          onClose={() => setEditing(false)}
+          onSave={handleSave}
         />
       )}
 
-      {saveError && <div className="global-error">{saveError}</div>}
+      {saveError && <div>{saveError}</div>}
     </div>
   );
 };
